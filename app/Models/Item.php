@@ -10,4 +10,16 @@ class Item extends Model
         'name',
     ];
 
+    public function exchanged() {
+        return $this->belongsToMany('Item', 'exchanges', 'item_exchanged_id', 'item_exchanged_into_id');
+    }
+
+    public function exchanged_into() {
+        return $this->belongsToMany('Item', 'exchanges', 'item_exchanged_into_id', 'item_exchanged_id');
+    }
+
+    public function users() {
+        return $this->belongsToMany(User::class);
+    }
+
 }

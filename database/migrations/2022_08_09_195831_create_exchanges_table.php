@@ -15,13 +15,16 @@ return new class extends Migration
     {
         Schema::create('exchanges', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('item_exchanged_id');
+            $table->unsignedBigInteger('item_exchanged_id')->constrained()->onDelete('cascade');;
             $table->foreign('item_exchanged_id')->references('id')->on('items');
 
-            $table->unsignedBigInteger('item_exchanged_into_id');
+            $table->unsignedBigInteger('item_exchanged_into_id')->constrained()->onDelete('cascade');;
             $table->foreign('item_exchanged_into_id')->references('id')->on('items');
 
             $table->float('rate', 4, 2);
+
+            $table->index('item_exchanged_id');
+            $table->index('item_exchanged_into_id');
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\ExchangeController;
 use App\Http\Controllers\API\ItemController;
+use App\Http\Controllers\API\MainController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::controller(MainController::class)->middleware('auth:sanctum')->group(function () {
+    Route::get('/do_exchange', 'exchange');
 });
 
 Route::apiResources([
