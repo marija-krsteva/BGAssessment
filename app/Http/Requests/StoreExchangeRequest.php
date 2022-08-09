@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreItemRequest extends FormRequest
+class StoreExchangeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,9 @@ class StoreItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|unique:items|max:255'
+            'item_exchanged_id'  => 'required|exists:items,id',
+            'item_exchanged_into_id' => 'required|exists:items,id',
+            'rate' => 'required|numeric|between:-10,99.99',
         ];
     }
 }

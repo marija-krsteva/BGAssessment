@@ -17,8 +17,8 @@ class ItemSeeder extends Seeder
     {
         $_ITEMS = ['5 free spins', '10 free spins', '5 euros', '1 Raffle ticket'];
 
-        foreach( $_ITEMS as $item) {
-            Item::firstOrCreate(['name' => $item]);
+        foreach( $_ITEMS as $ITEM) {
+            Item::firstOrCreate(['name' => $ITEM]);
         }
     }
 }
