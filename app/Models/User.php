@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,24 +41,38 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function hasEnoughQuantity($exchanged, $quantity) {
-        $item = $this->items()->where('item_exchanged_id',$exchanged)->first();
-        return $item->quantity < $quantity;
+    public function getItemById($item_id) {
+        return $this->items()->where('item_id', $item_id)->firstOrFail();
     }
 
+    /**
+     * Exchange logic and update user items quantity
+     *
+     * @param $exchanged
+     * @param $exchange_into
+     * @param $quantity
+     * @return bool
+     */
     public function doExchnage($exchanged, $exchange_into, $quantity) {
-        $exchanged_item = $this->items()->where('item_exchanged_id', $exchanged)->first();
-        $exchanged_into_item = $this->items()->where('exchange_into', $exchanged)->first();
+        $exchanged_item = $this->getItemById($exchanged);
+        $exchanged_into_item = $this->getItemById($exchange_into);
 
-        $exchanged_item_new_quantity = intval($exchanged_item->quantity) - $quantity;
-        $exchanged_into_item_new_quantity = (new Exchange)->calculateNewQuantity($exchanged, $exchange_into, $quantity);
+        $calculate_quantities = (new Exchange)->calculateNewQuantities($exchanged_item, $exchanged_into_item, $quantity);
+        if(!$calculate_quantities) {
+            return false;
+        }
 
-        $exchanged_item->update(['quantity' => $exchanged_item_new_quantity]);
-        $exchanged_into_item->update(['quantity' => $exchanged_into_item_new_quantity]);
+        $exchanged_item->saveItemQuantity($calculate_quantities['exchanged_item_new_quantity']);
+        $exchanged_into_item->saveItemQuantity($calculate_quantities['exchanged_into_item_new_quantity']);
+
+        return true;
     }
 
+    /**
+     * Relationships
+     */
     public function items() {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Item::class, 'item_user', 'user_id', 'item_id')->withPivot('quantity');
     }
 
 }

@@ -17,10 +17,11 @@ class ExchangeSeeder extends Seeder
         $_DEFAULT_EXCHANGES =
             [
                 ['item_exchanged_id' => '1','item_exchanged_into_id' => '2','rate' => '0.5'],
+                ['item_exchanged_id' => '1','item_exchanged_into_id' => '3','rate' => '1'],
                 ['item_exchanged_id' => '2','item_exchanged_into_id' => '1','rate' => '2'],
                 ['item_exchanged_id' => '2','item_exchanged_into_id' => '3','rate' => '2'],
                 ['item_exchanged_id' => '3','item_exchanged_into_id' => '1','rate' => '1'],
-                ['item_exchanged_id' => '3','item_exchanged_into_id' => '2','rate' => '2'],
+                ['item_exchanged_id' => '3','item_exchanged_into_id' => '2','rate' => '0.5'],
             ];
 
         foreach ($_DEFAULT_EXCHANGES as $DEFAULT_EXCHANGE) {

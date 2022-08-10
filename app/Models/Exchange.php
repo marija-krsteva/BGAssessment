@@ -12,19 +12,45 @@ class Exchange extends Model
         'rate',
     ];
 
+    /**
+     * Get the exchange rate between two items
+     *
+     * @param $exchanged
+     * @param $exchange_into
+     * @return mixed
+     */
     public function getRate($exchanged, $exchange_into) {
         $exchange = Exchange::where('item_exchanged_id',$exchanged)
             ->where('item_exchanged_into_id', $exchange_into)
-            ->first();
-//        todo: if not exists
+            ->firstOrFail();
+
         return $exchange->rate;
     }
 
-    public function calculateNewQuantity($exchanged, $exchange_into, $quantity) {
-        $rate = $this->getRate($exchanged, $exchange_into);
-        $exchange_quantity = $quantity * $rate;
+    /**
+     * Calculate quantity based on exchange rate
+     *
+     * @param $exchanged
+     * @param $exchange_into
+     * @param $quantity
+     * @return array|false
+     */
+    public function calculateNewQuantities($exchanged, $exchange_into, $quantity) {
+        $rate = $this->getRate($exchanged->id, $exchange_into->id);
 
-        return $exchange_quantity;
+        // Calculate new quantities based on rate and quantity
+        $exchanged_item_new_quantity = intval( $exchanged->pivot->quantity ) - ( $quantity / $rate );
+        $exchanged_into_item_new_quantity = intval( $exchange_into->pivot->quantity ) + ( $quantity * $rate );
+
+        // Make sure user has enough quantity to make the exchange
+        if($exchanged_item_new_quantity < 0) {
+            return false;
+        }
+
+        return [
+            'exchanged_item_new_quantity' => $exchanged_item_new_quantity,
+            'exchanged_into_item_new_quantity' => $exchanged_into_item_new_quantity
+        ];
     }
 
 }
