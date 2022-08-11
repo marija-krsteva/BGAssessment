@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
+use App\Models\Wheel;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,5 +23,7 @@ class DatabaseSeeder extends Seeder
             ExchangeSeeder::class,
             UsersItemsSeeder::class,
         ]);
+
+        Wheel::factory(10)->create();
     }
 }

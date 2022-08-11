@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\ExchangeController;
 use App\Http\Controllers\API\ItemController;
 use App\Http\Controllers\API\MainController;
+use App\Http\Controllers\API\WheelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,10 +23,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(MainController::class)->group(function () {
-    Route::get('/exchange', 'exchange');
+    Route::post('/exchange', 'exchange');
+    Route::post('/spin', 'spinAction');
 });
 
 Route::apiResources([
     'items'=> ItemController::class,
-    'exchanges' => ExchangeController::class
+    'exchanges' => ExchangeController::class,
+    'wheels' => WheelController::class
 ]);

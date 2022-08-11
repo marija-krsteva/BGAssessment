@@ -36,14 +36,18 @@ class Exchange extends Model
      * @return array|false
      */
     public function calculateNewQuantities($exchanged, $exchange_into, $quantity) {
+        // Get the exchange rate
         $rate = $this->getRate($exchanged->id, $exchange_into->id);
+
+        // If the user doesn't have the item we are exchanging into, take 0 as its quantity
+        $exchange_into_item_quantity = !$exchange_into->pivot ? 0 : $exchange_into->pivot->quantity;
 
         // Calculate new quantities based on rate and quantity
         $exchanged_item_new_quantity = intval( $exchanged->pivot->quantity ) - ( $quantity / $rate );
-        $exchanged_into_item_new_quantity = intval( $exchange_into->pivot->quantity ) + ( $quantity * $rate );
+        $exchanged_into_item_new_quantity = intval( $exchange_into_item_quantity ) + $quantity;
 
-        // Make sure user has enough quantity to make the exchange
-        if($exchanged_item_new_quantity < 0) {
+        // Make sure user has enough quantity to make the exchange, and the exchange returns full (non decimal) item quantity
+        if($exchanged_item_new_quantity < 0 || fmod($exchanged_item_new_quantity, 1) != 0) {
             return false;
         }
 
